@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "project_id": "python-to-rust-agent",
+  "status": "ready",
+  "instructions": "AGENT.md",
+  "playbook": "PLAYBOOK.md",
+  "toolbox": "toolbox/index.json",
+  "execution": {
+    "mode": "manual",
+    "trigger": "An explicit manual invocation with current scope",
+    "timezone": null,
+    "dependencies": [],
+    "ordering": "serial",
+    "overlap_policy": "single active writer; no overlapping unattended runs",
+    "retry_policy": "reconcile-before-retry",
+    "stop_conditions": [
+      "authority missing",
+      "budget exhausted",
+      "outcome uncertain",
+      "required check unavailable"
+    ],
+    "notification": "Final report or actionable blocker only",
+    "registration": {
+      "provider": null,
+      "id": null,
+      "status": "unregistered",
+      "verified_at": null,
+      "evidence": []
+    }
+  },
+  "bounds": {
+    "max_attempts": 3,
+    "max_minutes": 60,
+    "max_depth": 1,
+    "max_concurrency": 2,
+    "max_workers": 2,
+    "max_cost_usd": 0
+  },
+  "capabilities": {
+    "required": [
+      "artifact-read-write",
+      "resource-search",
+      "outcome-validation",
+      "local-execution",
+      "rust-toolchain",
+      "github-read"
+    ],
+    "optional": [
+      "whole-process-tree-memory",
+      "native-model-selection"
+    ],
+    "observed": [
+      "artifact-read-write: isolated source snapshots and local reports exercised",
+      "resource-search: toolbox inventory and source inspection exercised",
+      "outcome-validation: test suite, frozen fixture contracts and independent evidence review",
+      "local-execution: Python fixture and CLI executed on macOS",
+      "rust-toolchain: optimized Rust fixture built and executed on macOS",
+      "github-read: connector identity and repository-list response shapes inspected; verify current host and account before use"
+    ],
+    "missing": [
+      "whole-process-tree-memory",
+      "native-model-selection"
+    ]
+  },
+  "authority": {
+    "source": "The current invoker must authorize the repositories and local actions for each run.",
+    "allowed": [
+      "Run the local fixtures on request",
+      "Read repositories within the current authorized scope",
+      "Build and evaluate one isolated local candidate when authorized"
+    ],
+    "escalate": [
+      "Missing workload/semantic contract",
+      "Required adapter unavailable",
+      "Source conflict or uncertain outcome"
+    ],
+    "external_actions": []
+  },
+  "retention": {
+    "temporary_dirs": [
+      "scratch"
+    ],
+    "temporary_days": 7,
+    "durable": "Retain sources, candidates, raw evidence and reviews until explicit cleanup."
+  },
+  "package_version": "0.1.0"
+}

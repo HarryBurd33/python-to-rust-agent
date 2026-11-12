@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "scope": {"identity": "local-fixture", "include_affiliated": false},
+  "terminal_page_verified": true,
+  "pages": [
+    {
+      "status": "ok", "cursor": null, "next_cursor": null,
+      "repositories": [
+        {
+          "repository": "local-fixture/markdown",
+          "source_url": "https://example.invalid/local-fixture/markdown",
+          "source_sha": "1111111111111111111111111111111111111111",
+          "archived": false, "fork": false,
+          "access": "readable", "local_path": "markdown"
+        },
+        {
+          "repository": "local-fixture/compute",
+          "source_url": "https://example.invalid/local-fixture/compute",
+          "source_sha": "2222222222222222222222222222222222222222",
+          "archived": false, "fork": false,
+          "access": "readable", "local_path": "compute"
+        }
+      ]
+    }
+  ]
+}

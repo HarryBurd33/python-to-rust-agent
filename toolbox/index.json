@@ -1,0 +1,586 @@
+{
+  "schema_version": 1,
+  "project_id": "python-to-rust-agent",
+  "resources": [
+    {
+      "id": "gitignore",
+      "purpose": "Excludes generated run data and caches from version control by default",
+      "kind": "configuration",
+      "location": ".gitignore",
+      "version": "d9b22dc66463864f97748e52360d63f20f769a6e2af4a49080e2cef81bc9d681",
+      "input_contract": "Passive file. No callable interface.",
+      "output_contract": "Excludes generated run data and caches from version control by default",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Read back the ignore rules against the documented output paths.",
+        "evidence": [
+          ".gitignore",
+          "README.md"
+        ]
+      },
+      "used_by": [
+        "step-05",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "No matching source resource; prepared for the portable distribution."
+    },
+    {
+      "id": "agent-md",
+      "purpose": "Manual Codex invocation and scope checks",
+      "kind": "instructions",
+      "location": "AGENT.md",
+      "version": "a75c8821116076af40f417052267b1ff09eff7e03202e85eb53d97a5a524e0e6",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [
+        "playbook-md",
+        "agent-json",
+        "toolbox-index-json"
+      ],
+      "status": "validated",
+      "validation": {
+        "method": "Release readback and portable index audit.",
+        "evidence": [
+          "AGENT.md"
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Adapted the indexed source documentation or metadata for portable use."
+    },
+    {
+      "id": "license-agent-forge",
+      "purpose": "Task package reference",
+      "kind": "reference",
+      "location": "LICENSE.agent-forge",
+      "version": "1e3aeed264554c5e05a20db04acf75fa94a1015384a7ec971db7ec240eb3eb6f",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Release readback and portable index audit.",
+        "evidence": [
+          "LICENSE.agent-forge"
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Retained the indexed attribution."
+    },
+    {
+      "id": "playbook-md",
+      "purpose": "Source inspection, profiling, porting, verification and recovery procedure",
+      "kind": "playbook",
+      "location": "PLAYBOOK.md",
+      "version": "cb6c29341e2b67c0267a1c7fe20ad3029725e63cff9523416a7c18265a09bada",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [
+        "toolbox-contracts-md"
+      ],
+      "status": "validated",
+      "validation": {
+        "method": "Release readback and portable index audit.",
+        "evidence": [
+          "PLAYBOOK.md"
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09",
+        "check-10"
+      ],
+      "replaces": null,
+      "reuse_decision": "Adapted the indexed source documentation or metadata for portable use."
+    },
+    {
+      "id": "readme-md",
+      "purpose": "Task package reference",
+      "kind": "reference",
+      "location": "README.md",
+      "version": "3da4f367ee6a57cbce0cbbde6c6c29b37d776c38dcf189dad25a9aaf3af6cb4b",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Release readback and portable index audit.",
+        "evidence": [
+          "README.md"
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Adapted the indexed source documentation or metadata for portable use."
+    },
+    {
+      "id": "validation-md",
+      "purpose": "Sanitized local test and fixture validation summary",
+      "kind": "evidence",
+      "location": "VALIDATION.md",
+      "version": "7686c263710d19b7cc559007d049811d6d96043dde2c39550c79404f49635bcc",
+      "input_contract": "Passive file. No callable interface.",
+      "output_contract": "Sanitized local test and fixture validation summary",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Cross-checked final test, fixture and independent-review observations before export.",
+        "evidence": [
+          "scripts/optimize.py",
+          "tests/test_optimize.py"
+        ]
+      },
+      "used_by": [
+        "check-04",
+        "check-06",
+        "check-07",
+        "check-10"
+      ],
+      "replaces": null,
+      "reuse_decision": "No matching source resource; prepared for the portable distribution."
+    },
+    {
+      "id": "agent-json",
+      "purpose": "Manual mode, finite bounds, observed capabilities and local-only authority",
+      "kind": "configuration",
+      "location": "agent.json",
+      "version": "d42a8d5516ed9afce56325fa8a923ca7f05389b60a80f9cc0ef246c63036a24b",
+      "input_contract": "Current invocation authority and host capabilities",
+      "output_contract": "Configuration only; never a launch receipt",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Release readback and portable index audit.",
+        "evidence": [
+          "agent.json"
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Adapted the indexed source documentation or metadata for portable use."
+    },
+    {
+      "id": "fixtures-candidate-main-rs",
+      "purpose": "Frozen local input/oracle or Python/Rust implementation fixture",
+      "kind": "fixture",
+      "location": "fixtures/candidate/main.rs",
+      "version": "a1dda943955e58e50226f9a15e485b90780e198cf685017d99053dd69c9d622b",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "fixtures/candidate/main.rs",
+            "sha256": "a1dda943955e58e50226f9a15e485b90780e198cf685017d99053dd69c9d622b"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "fixtures-compute-agent-md",
+      "purpose": "Frozen local input/oracle or Python/Rust implementation fixture",
+      "kind": "fixture",
+      "location": "fixtures/compute/AGENT.md",
+      "version": "53a3980feacea9db9439eaf9be746ea954afc179a9bc9b958e7b556d0ac4684a",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "fixtures/compute/AGENT.md",
+            "sha256": "53a3980feacea9db9439eaf9be746ea954afc179a9bc9b958e7b556d0ac4684a"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "fixtures-compute-worker-py",
+      "purpose": "Frozen local input/oracle or Python/Rust implementation fixture",
+      "kind": "fixture",
+      "location": "fixtures/compute/worker.py",
+      "version": "b702e0c3709f53ed1a2d8269ac7e8363c4dbac283219b9329d9e5e4fe6ee300d",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "fixtures/compute/worker.py",
+            "sha256": "b702e0c3709f53ed1a2d8269ac7e8363c4dbac283219b9329d9e5e4fe6ee300d"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "fixtures-compute-workflow-py",
+      "purpose": "Frozen local input/oracle or Python/Rust implementation fixture",
+      "kind": "fixture",
+      "location": "fixtures/compute/workflow.py",
+      "version": "6104beb138ce676de35d81a1b1cc26811e53f1027b206331a9ae8c07c0972be2",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "fixtures/compute/workflow.py",
+            "sha256": "6104beb138ce676de35d81a1b1cc26811e53f1027b206331a9ae8c07c0972be2"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "fixtures-contracts-changed-json",
+      "purpose": "Frozen local input/oracle or Python/Rust implementation fixture",
+      "kind": "fixture",
+      "location": "fixtures/contracts/changed.json",
+      "version": "cbc14272540869a34293f8e5ea1bba997892cd30ca40463f120036a167856bf6",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "fixtures/contracts/changed.json",
+            "sha256": "cbc14272540869a34293f8e5ea1bba997892cd30ca40463f120036a167856bf6"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "fixtures-contracts-standard-json",
+      "purpose": "Frozen local input/oracle or Python/Rust implementation fixture",
+      "kind": "fixture",
+      "location": "fixtures/contracts/standard.json",
+      "version": "9d93c5c316346d205d48c9d3b189806c9f9f9aca3cdb2c31c0f7e19a8d44775b",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "fixtures/contracts/standard.json",
+            "sha256": "9d93c5c316346d205d48c9d3b189806c9f9f9aca3cdb2c31c0f7e19a8d44775b"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "fixtures-inventory-json",
+      "purpose": "Frozen local input/oracle or Python/Rust implementation fixture",
+      "kind": "fixture",
+      "location": "fixtures/inventory.json",
+      "version": "3c9e05c357ead8b8f0550457a4212c08bd5d214217439ea4dbc5aef7a4deb984",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "fixtures/inventory.json",
+            "sha256": "3c9e05c357ead8b8f0550457a4212c08bd5d214217439ea4dbc5aef7a4deb984"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "fixtures-markdown-skill-md",
+      "purpose": "Frozen local input/oracle or Python/Rust implementation fixture",
+      "kind": "fixture",
+      "location": "fixtures/markdown/SKILL.md",
+      "version": "7e6584bd7433c0e8727f4cbb5a9e18b14444c26c9cb831e6149212f0c22736ba",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "fixtures/markdown/SKILL.md",
+            "sha256": "7e6584bd7433c0e8727f4cbb5a9e18b14444c26c9cb831e6149212f0c22736ba"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "fixtures-wrong-candidate-main-rs",
+      "purpose": "Frozen local input/oracle or Python/Rust implementation fixture",
+      "kind": "fixture",
+      "location": "fixtures/wrong-candidate/main.rs",
+      "version": "c43e22764f4d29011c1af6bbcb6dbe439bd1bb61e679bc24ea0c9eb68e66c616",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "fixtures/wrong-candidate/main.rs",
+            "sha256": "c43e22764f4d29011c1af6bbcb6dbe439bd1bb61e679bc24ea0c9eb68e66c616"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "scripts-optimize-py",
+      "purpose": "Deterministic inventory, snapshots, parity, benchmark, resume and attestation gates",
+      "kind": "script",
+      "location": "scripts/optimize.py",
+      "version": "c9c049ee96b2d0613c4cdc44db100e7e3c1d44a9be160f4831f97764d0410cc2",
+      "input_contract": "Typed CLI/config contracts in toolbox/contracts.md",
+      "output_contract": "JSON receipts, durable run state and JSON/Markdown result",
+      "dependencies": [
+        "toolbox-contracts-md"
+      ],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "scripts/optimize.py",
+            "sha256": "c9c049ee96b2d0613c4cdc44db100e7e3c1d44a9be160f4831f97764d0410cc2"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09",
+        "check-03",
+        "check-04",
+        "check-05",
+        "check-07"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "tests-test-optimize-py",
+      "purpose": "Regression suite for gates, scope, freshness and uncertainty recovery",
+      "kind": "script",
+      "location": "tests/test_optimize.py",
+      "version": "9db62352564fd894cac33b4f75597b4028fc06032bbd41779a15e58dc3b70dd3",
+      "input_contract": "Python unittest invocation from README; isolated local fixtures",
+      "output_contract": "Test result and exit status",
+      "dependencies": [
+        "scripts-optimize-py"
+      ],
+      "status": "validated",
+      "validation": {
+        "method": "Byte-identical to the source package; fixture and test outcomes are summarized in VALIDATION.md.",
+        "evidence": [
+          "VALIDATION.md"
+        ],
+        "bindings": [
+          {
+            "role": "source",
+            "location": "tests/test_optimize.py",
+            "sha256": "9db62352564fd894cac33b4f75597b4028fc06032bbd41779a15e58dc3b70dd3"
+          }
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Copied the indexed source asset byte for byte."
+    },
+    {
+      "id": "toolbox-contracts-md",
+      "purpose": "Task package reference",
+      "kind": "reference",
+      "location": "toolbox/contracts.md",
+      "version": "297b5fffaac4b8f1d3a3d24eb5046d89d7f1ca689b9e0c22ef2af9553fe33a9c",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Release readback and portable index audit.",
+        "evidence": [
+          "toolbox/contracts.md"
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Adapted the indexed source documentation or metadata for portable use."
+    },
+    {
+      "id": "toolbox-github-md",
+      "purpose": "Read-only connector contract for pinned GitHub discovery",
+      "kind": "reference",
+      "location": "toolbox/github.md",
+      "version": "34d2d3a625c71d18e17b8390997989c8e38916b62866a184512e05ca049f6e4f",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Release readback and portable index audit.",
+        "evidence": [
+          "toolbox/github.md"
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Adapted the indexed source documentation or metadata for portable use."
+    },
+    {
+      "id": "toolbox-index-json",
+      "purpose": "Inventory of every durable package file",
+      "kind": "index",
+      "location": "toolbox/index.json",
+      "version": "0.1.0",
+      "input_contract": "Not applicable: passive document",
+      "output_contract": "Operating instructions or retained evidence, as described by its purpose",
+      "dependencies": [],
+      "status": "validated",
+      "validation": {
+        "method": "Release readback and portable index audit.",
+        "evidence": [
+          "AGENT.md",
+          "VALIDATION.md"
+        ]
+      },
+      "used_by": [
+        "step-01",
+        "check-09"
+      ],
+      "replaces": null,
+      "reuse_decision": "Adapted the indexed source documentation or metadata for portable use."
+    }
+  ]
+}

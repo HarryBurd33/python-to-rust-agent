@@ -1,0 +1,360 @@
+{
+  "schema_version": 1,
+  "repository": "local-fixture/compute",
+  "component": "worker",
+  "source_root": "../compute",
+  "source_sha": "2222222222222222222222222222222222222222",
+  "memory_scope": "single_process",
+  "full_workflow_representative": true,
+  "representativeness": "Representative of this deterministic fixture only. Launches the actual Python workflow dispatcher and includes argument parsing and process startup. Typical and large runs dominate this fixture's intended compute workload; startup and small workloads are diagnostic.",
+  "build_profile": "rustc --edition=2021 -C opt-level=3 -C debug-assertions=no; standalone std only, no dependency resolution",
+  "trials": 7,
+  "timeout_seconds": 15,
+  "invocation_seconds": 90,
+  "versions": {
+    "python": [
+      "python3",
+      "--version"
+    ],
+    "rust": [
+      "rustc",
+      "--version",
+      "--verbose"
+    ]
+  },
+  "build": [
+    "rustc",
+    "--edition=2021",
+    "-C",
+    "opt-level=3",
+    "-C",
+    "debug-assertions=no",
+    "{candidate}/main.rs",
+    "-o",
+    "{build}/helper"
+  ],
+  "cases": [
+    {
+      "id": "workflow-valid",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute",
+        "2"
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute",
+        "2"
+      ],
+      "expect": {
+        "stdout": "1586005468\n",
+        "stderr": "",
+        "exit_code": 0,
+        "effects": []
+      }
+    },
+    {
+      "id": "workflow-zero",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute",
+        "0"
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute",
+        "0"
+      ],
+      "expect": {
+        "stdout": "1\n",
+        "stderr": "",
+        "exit_code": 0,
+        "effects": []
+      }
+    },
+    {
+      "id": "workflow-missing",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute"
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute"
+      ],
+      "expect": {
+        "stdout": "",
+        "stderr": "expected one count\n",
+        "exit_code": 2,
+        "effects": []
+      }
+    },
+    {
+      "id": "workflow-empty",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute",
+        ""
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute",
+        ""
+      ],
+      "expect": {
+        "stdout": "",
+        "stderr": "count is empty\n",
+        "exit_code": 2,
+        "effects": []
+      }
+    },
+    {
+      "id": "workflow-malformed",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute",
+        "2.5"
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute",
+        "2.5"
+      ],
+      "expect": {
+        "stdout": "",
+        "stderr": "count must use ASCII digits\n",
+        "exit_code": 2,
+        "effects": []
+      }
+    },
+    {
+      "id": "workflow-unicode",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute",
+        "٣"
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute",
+        "٣"
+      ],
+      "expect": {
+        "stdout": "",
+        "stderr": "count must use ASCII digits\n",
+        "exit_code": 2,
+        "effects": []
+      }
+    },
+    {
+      "id": "workflow-leading-zeros",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute",
+        "0000"
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute",
+        "0000"
+      ],
+      "expect": {
+        "stdout": "1\n",
+        "stderr": "",
+        "exit_code": 0,
+        "effects": []
+      }
+    },
+    {
+      "id": "component-above-limit",
+      "scope": "component",
+      "baseline": [
+        "{python}",
+        "{source}/worker.py",
+        "3000001"
+      ],
+      "candidate": [
+        "{build}/helper",
+        "3000001"
+      ],
+      "expect": {
+        "stdout": "",
+        "stderr": "count exceeds 3000000\n",
+        "exit_code": 2,
+        "effects": []
+      }
+    },
+    {
+      "id": "component-overflow",
+      "scope": "component",
+      "baseline": [
+        "{python}",
+        "{source}/worker.py",
+        "999999999999999999999999999"
+      ],
+      "candidate": [
+        "{build}/helper",
+        "999999999999999999999999999"
+      ],
+      "expect": {
+        "stdout": "",
+        "stderr": "count exceeds 3000000\n",
+        "exit_code": 2,
+        "effects": []
+      }
+    },
+    {
+      "id": "component-multiple",
+      "scope": "component",
+      "baseline": [
+        "{python}",
+        "{source}/worker.py",
+        "1",
+        "2"
+      ],
+      "candidate": [
+        "{build}/helper",
+        "1",
+        "2"
+      ],
+      "expect": {
+        "stdout": "",
+        "stderr": "expected one count\n",
+        "exit_code": 2,
+        "effects": []
+      }
+    }
+  ],
+  "workloads": [
+    {
+      "id": "workflow-startup",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute",
+        "0"
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute",
+        "0"
+      ],
+      "description": "Launch the workflow and complete with zero compute iterations.",
+      "required": false
+    },
+    {
+      "id": "workflow-small",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute",
+        "5000"
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute",
+        "5000"
+      ],
+      "description": "Run the workflow with 5000 iterations.",
+      "required": false
+    },
+    {
+      "id": "workflow-typical",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute",
+        "600000"
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute",
+        "600000"
+      ],
+      "description": "Run the workflow with 600000 iterations.",
+      "required": true
+    },
+    {
+      "id": "workflow-large",
+      "scope": "workflow",
+      "baseline": [
+        "{python}",
+        "{source}/workflow.py",
+        "compute",
+        "2400000"
+      ],
+      "candidate": [
+        "{python}",
+        "{source}/workflow.py",
+        "--native",
+        "{build}/helper",
+        "compute",
+        "2400000"
+      ],
+      "description": "Run the workflow with 2400000 iterations.",
+      "required": true
+    },
+    {
+      "id": "component-typical",
+      "scope": "component",
+      "baseline": [
+        "{python}",
+        "{source}/worker.py",
+        "600000"
+      ],
+      "candidate": [
+        "{build}/helper",
+        "600000"
+      ],
+      "description": "Run just the worker with 600000 iterations.",
+      "required": false
+    }
+  ]
+}
