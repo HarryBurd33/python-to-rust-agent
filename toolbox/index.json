@@ -81,7 +81,7 @@
       "purpose": "Source inspection, profiling, porting, verification and recovery procedure",
       "kind": "playbook",
       "location": "PLAYBOOK.md",
-      "version": "cb6c29341e2b67c0267a1c7fe20ad3029725e63cff9523416a7c18265a09bada",
+      "version": "0171bf62d2362ecd304b0cc5d2fceaf614cd0c318dcbb4bc12049ef1ba02979e",
       "input_contract": "Not applicable: passive document",
       "output_contract": "Operating instructions or retained evidence, as described by its purpose",
       "dependencies": [
@@ -89,7 +89,7 @@
       ],
       "status": "validated",
       "validation": {
-        "method": "Release readback and portable index audit.",
+        "method": "Readback of explicit negative file-output parity checks; source evaluator and frozen performance contracts unchanged.",
         "evidence": [
           "PLAYBOOK.md"
         ]

@@ -40,6 +40,8 @@ Distinguish invalid input, missing capability, correctness defect, insufficient 
 
 Evaluate using the frozen hash and unchanged source/config identity. Check stdout, stderr/exit code and all relevant side effects. Include empty/zero/missing, malformed, Unicode and numeric limits where applicable. Stdout parity alone cannot establish unspecified file effects.
 
+For file-writing helpers, compare failure paths with and without overwrite flags against existing files and dangling symlinks. Preserve the original's exclusive-creation behavior even when successful writes allow replacement. Use isolated supplementary checks when the snapshot adapter cannot represent a fixture, retain before/after file evidence, and treat any independent mismatch as blocking a recommendation. After a code repair, retain the old evidence and evaluate the new candidate identity; do not rerun unchanged code merely to seek a favorable noise result.
+
 Benchmark unprofiled complete workflows on the same host with repeated trials and comparable conditions; retain raw trials, versions, exact commands and units. Measure equivalent OS-level peak memory including host/wrapper/children where applicable. Unsupported topology is inconclusive. A boolean assertion cannot replace reviewer inspection of process behavior.
 
 For each metric reduction = 100*(Python-Rust)/Python. Require both ratios <=0.80 on every required workload beyond the frozen noise rule. Invalid/zero baselines are inconclusive. No cherry-picking or weakened criteria; helper gains are explanatory only.
