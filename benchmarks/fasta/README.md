@@ -1,0 +1,13 @@
+# Isolated FASTA experiment
+
+One explicitly requested experiment on a fresh standard GitHub-hosted macOS 15 arm64 VM, separate from the user's desktop. VM isolation does not guarantee dedicated physical hardware or a conclusive outcome. Standard hosted runners are free on public repositories: https://docs.github.com/en/actions/reference/runners/github-hosted-runners
+
+This branch adds benchmark packaging only. It preserves every original source, Rust candidate, fixture, evaluator and contract byte. `bundle.json` contains zlib/base64-encoded files to retain exact synthetic inputs compactly; each decoded file is checked against its SHA-256. Public source: HarryBurd33/research-writer at 89c9edcff97265e54d48dfc46ffbb402c36fd663, with MIT notice retained. Evaluator: the unchanged public Python-to-Rust Agent package. No private inventory, account data, checkpoints or desktop telemetry is included.
+
+Python 3.15.0, rustc 1.99.1; exact release build command from the frozen contract. Five required workloads, seven paired trials each, full command startup/input/output measured. Runtime AND peak memory must each improve by at least 20%, with candidate maximum <=80% of baseline minimum and each implementation's range/median <=15%. No filtering, batching, changed timer, adaptive counts or retries for a favorable result.
+
+Before timing, record a fresh memory calibration and five host intervals requiring at least85%idle and zero swap-ins/outs. Stop with evidence if readiness fails. The single workflow push is the explicit experiment trigger; no schedule, automatic retry, paid runner, activation or original-repository update is configured. Only the dated branch's workflow-file push triggers this job; re-run attempts are skipped. All actions are pinned to inspected commit IDs, token permission is read-only and checkout credentials are not persisted.
+
+Download and retain the complete seven-day artifact before expiry. Independent review must validate parity,70rawobservations, unchanged identities, calibration and single-process memory scope before any recommendation. The runner deliberately produces no self-attestation. New platform measurements are a separate experiment; never pair desktop baselines with VM candidate timings. An inconclusive result must remain inconclusive.
+
+Local packaging check (no benchmark): `python3 benchmarks/fasta/run.py --destination /tmp/new-fasta-verification --verify-only`.
