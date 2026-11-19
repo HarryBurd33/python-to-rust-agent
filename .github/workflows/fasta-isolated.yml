@@ -26,6 +26,10 @@ jobs:
           python-version: '3.15.0'
       - name: Pin Rust compiler
         run: rustup toolchain install 1.99.1 --profile minimal
+      - name: Settle disposable VM after toolchain installation
+        run: |
+          sudo mdutil -i off /
+          sleep 90
       - name: Run fixed benchmark once
         run: python3 benchmarks/fasta/run.py --destination "$RUNNER_TEMP/fasta-evidence"
       - name: Preserve complete evidence even on failure

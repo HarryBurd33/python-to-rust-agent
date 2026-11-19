@@ -10,4 +10,6 @@ Before timing, record a fresh memory calibration and five host intervals requiri
 
 Download and retain the complete seven-day artifact before expiry. Independent review must validate parity,70rawobservations, unchanged identities, calibration and single-process memory scope before any recommendation. The runner deliberately produces no self-attestation. New platform measurements are a separate experiment; never pair desktop baselines with VM candidate timings. An inconclusive result must remain inconclusive.
 
+The first VM setup attempt stopped before any benchmark because startup/indexing activity failed readiness. Its complete artifact is retained. The second setup attempt disables Spotlight indexing only inside the disposable VM and waits a fixed 90 seconds after installation, before applying the unchanged readiness gate. No security service is disabled and no setting on the user's Mac is changed. At most two setup attempts and one measured comparison are planned; retain failures rather than repeating for favorable timing.
+
 Local packaging check (no benchmark): `python3 benchmarks/fasta/run.py --destination /tmp/new-fasta-verification --verify-only`.
