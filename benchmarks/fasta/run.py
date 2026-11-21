@@ -84,6 +84,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--destination', required=True, type=Path)
     parser.add_argument('--verify-only', action='store_true')
+    parser.add_argument('--record-only-readiness', action='store_true', help='Explicitly authorized run: retain host telemetry without enforcing the additional idle preflight')
     args = parser.parse_args()
     root = args.destination.resolve()
     package = restore(root)
@@ -103,8 +104,9 @@ def main():
     calibrate(root)
     text = capture(root, 'host-before.txt', ['top', '-l', '6', '-s', '2', '-n', '8', '-o', 'cpu', '-stats', 'pid,command,cpu'])
     readiness = ready(text)
+    readiness['enforced'] = not args.record_only_readiness
     save(root / 'readiness.json', readiness)
-    if not readiness['passed']:
+    if not readiness['passed'] and readiness['enforced']:
         raise RuntimeError('Fresh VM did not meet readiness; no performance run started')
     common = [sys.executable, str(root / 'optimize.py')]
     arguments = [str(root / 'contract.json'), '--runs', str(root / 'runs'), '--expect-contract', CONTRACT]

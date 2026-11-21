@@ -12,4 +12,6 @@ Download and retain the complete seven-day artifact before expiry. Independent r
 
 The first VM setup attempt stopped before any benchmark because startup/indexing activity failed readiness. Its complete artifact is retained. The second setup attempt disables Spotlight indexing only inside the disposable VM and waits a fixed 90 seconds after installation, before applying the unchanged readiness gate. No security service is disabled and no setting on the user's Mac is changed. At most two setup attempts and one measured comparison are planned; retain failures rather than repeating for favorable timing.
 
+Both initial setup attempts stopped at readiness, before any benchmark. The user subsequently authorized exactly one isolated-VM comparison despite readiness failure. This third launch passes `--record-only-readiness`: it records the identical idle/swap check and marks it unenforced. All correctness and 20% runtime/memory plus 15% variability gates remain enforced by the unchanged evaluator. The earlier two-setup bound is superseded only for this explicitly requested comparison. VM isolation does not imply quietness; retain that limitation with the result. No further comparison is authorized automatically.
+
 Local packaging check (no benchmark): `python3 benchmarks/fasta/run.py --destination /tmp/new-fasta-verification --verify-only`.
