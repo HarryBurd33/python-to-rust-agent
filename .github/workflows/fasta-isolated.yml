@@ -24,13 +24,13 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.15.0'
-      - name: Pin Rust compiler
+      - name: Install Rust 1.99.1 (wrapper selects direct compiler through preserved PATH)
         run: rustup toolchain install 1.99.1 --profile minimal
       - name: Settle disposable VM after toolchain installation
         run: |
           sudo mdutil -i off /
           sleep 90
-      - name: Run fixed benchmark once
+      - name: Verify sanitized compiler environment and run fixed benchmark once
         run: python3 benchmarks/fasta/run.py --destination "$RUNNER_TEMP/fasta-evidence" --record-only-readiness
       - name: Preserve complete evidence even on failure
         if: always()

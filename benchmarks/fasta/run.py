@@ -3,11 +3,13 @@
 import argparse
 import base64
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
 import platform
 import re
+import shutil
 import signal
 import subprocess
 import sys
@@ -39,12 +41,52 @@ def restore(destination):
     return package
 
 
-def capture(root, name, argv):
-    result = subprocess.run(argv, capture_output=True, text=True, timeout=45)
+def capture(root, name, argv, *, env=None, cwd=None):
+    result = subprocess.run(argv, capture_output=True, text=True, timeout=45, env=env, cwd=cwd)
     (root / name).write_text(result.stdout + result.stderr)
     if result.returncode:
         raise RuntimeError('Context command failed: ' + repr(argv))
     return result.stdout
+
+
+def compiler_preflight(root):
+    # RUSTUP_TOOLCHAIN is deliberately absent from the evaluator's allowlist.
+    # Select an installed compiler binary, not the rustup proxy/default, through
+    # PATH: the frozen evaluator preserves PATH for its isolated build children.
+    selected = capture(root, 'rustup-which.txt',
+                       ['rustup', 'which', '--toolchain', '1.99.1', 'rustc']).strip()
+    compiler = Path(selected)
+    if not compiler.is_absolute() or not compiler.is_file():
+        raise RuntimeError('Rust 1.99.1 lookup did not return an installed absolute compiler')
+    compiler = compiler.resolve()
+    os.environ['PATH'] = str(compiler.parent) + os.pathsep + os.environ.get('PATH', '')
+
+    evaluator = root / 'optimize.py'
+    if hashlib.sha256(evaluator.read_bytes()).hexdigest() != EVALUATOR:
+        raise RuntimeError('Evaluator identity changed before compiler preflight')
+    # Import under a non-CLI name; the restored evaluator guards main().
+    spec = importlib.util.spec_from_file_location('_fasta_frozen_evaluator', evaluator)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    environment = module.runtime_environment()
+    resolved = shutil.which('rustc', path=environment.get('PATH', ''))
+    save(root / 'compiler-preflight.json', {
+        'evaluator_sha256': EVALUATOR,
+        'environment_function': 'restored optimize.py:runtime_environment',
+        'selected_compiler': str(compiler), 'resolved_compiler': resolved,
+        'path': environment.get('PATH'),
+        'rustup_toolchain_preserved': 'RUSTUP_TOOLCHAIN' in environment,
+        'cwd': str(root / 'candidate'), 'passed': False,
+    })
+    if resolved is None or Path(resolved).resolve() != compiler:
+        raise RuntimeError('Sanitized evaluator PATH did not select the installed compiler')
+    rust = capture(root, 'rust-version.txt', ['rustc', '--version', '--verbose'],
+                   env=environment, cwd=root / 'candidate')
+    if not rust.startswith('rustc 1.99.1 ') or '\nrelease: 1.99.1\n' not in '\n' + rust:
+        raise RuntimeError('Sanitized evaluator environment requires rustc 1.99.1')
+    proof = json.loads((root / 'compiler-preflight.json').read_text())
+    proof.update(passed=True, rustc_verbose=rust)
+    save(root / 'compiler-preflight.json', proof)
 
 
 def ready(text):
@@ -96,9 +138,7 @@ def main():
         raise RuntimeError('Requires the predeclared macOS arm64 runner')
     if sys.version_info[:3] != (3, 15, 0):
         raise RuntimeError('Requires Python 3.15.0')
-    rust = capture(root, 'rust-version.txt', ['rustc', '--version', '--verbose'])
-    if not rust.startswith('rustc 1.99.1 '):
-        raise RuntimeError('Requires rustc 1.99.1')
+    compiler_preflight(root)
     capture(root, 'python-version.txt', [sys.executable, '--version'])
     save(root / 'runner.json', {k: os.environ.get(k) for k in ('RUNNER_OS', 'RUNNER_ARCH', 'ImageOS', 'ImageVersion', 'GITHUB_SHA', 'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT')})
     calibrate(root)
