@@ -28,7 +28,7 @@ jobs:
         run: rustup toolchain install 1.99.1 --profile minimal
       - name: Settle disposable Linux VM after toolchain installation
         run: sleep 90
-      - name: Verify affinity, compiler and quietness before fixed benchmark once
+      - name: Qualify bound RSS adapter, affinity, compiler and quietness before fixed benchmark once
         run: python3 benchmarks/fasta/run_linux.py --destination "$RUNNER_TEMP/fasta-evidence"
       - name: Preserve complete evidence even on failure
         if: always()

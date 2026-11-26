@@ -143,33 +143,28 @@ def check_readiness(root, selected):
     raise RuntimeError('Linux VM did not meet readiness; no performance run started')
 
 
-def calibrate(root):
-    rows = []
-    for size in (0, 64, 128):
-        output = root / ('memory-probe-' + str(size) + '.json')
-        with output.open('w') as stream:
-            child = subprocess.Popen([sys.executable, str(root / 'memory-probe.py'), str(size)],
-                                     stdout=stream, start_new_session=True)
-            def expired(signum, frame):
-                os.killpg(child.pid, signal.SIGKILL)
-                raise TimeoutError('Memory calibration timed out')
-            previous = signal.signal(signal.SIGALRM, expired)
-            signal.alarm(20)
-            try:
-                _, status, usage = os.wait4(child.pid, 0)
-                child.returncode = os.waitstatus_to_exitcode(status)
-            finally:
-                signal.alarm(0)
-                signal.signal(signal.SIGALRM, previous)
-            if child.returncode:
-                raise RuntimeError('Memory probe failed')
-        child_raw = json.loads(output.read_text())
-        rows.append({'allocated_mib': size, 'wait4_ru_maxrss': usage.ru_maxrss,
-                     'wait4_ru_maxrss_unit': 'KiB', 'wait4_ru_maxrss_bytes': usage.ru_maxrss * 1024,
-                     'child': child_raw, 'child_self_ru_maxrss_unit': 'KiB',
-                     'child_self_ru_maxrss_bytes': child_raw['self_ru_maxrss'] * 1024})
-    save(root / 'memory-calibration.json', {'platform': platform.platform(), 'rows': rows,
-         'note': 'Linux KiB normalized to bytes; independent scope review required, no automatic attestation.'})
+def qualify_rss(root):
+    spec = importlib.util.spec_from_file_location('_rss_builder', Path(__file__).with_name('rss_build.py'))
+    builder = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(builder)
+    derivative = builder.build(root)
+    # All fixed tests and qualification diagnostics precede readiness and FASTA.
+    try:
+        result = subprocess.run([sys.executable, str(root / 'test_rss.py'), '--root', str(root)],
+                                capture_output=True, text=True, timeout=60)
+    except subprocess.TimeoutExpired as error:
+        def decoded(value):
+            return value.decode(errors='replace') if isinstance(value, bytes) else (value or '')
+        (root / 'rss-tests.log').write_text(decoded(error.stdout) + decoded(error.stderr))
+        raise RuntimeError('RSS adapter tests timed out; no FASTA comparison started') from error
+    (root / 'rss-tests.log').write_text(result.stdout + result.stderr)
+    if result.returncode:
+        raise RuntimeError('RSS adapter regression tests failed; no FASTA comparison started')
+    spec = importlib.util.spec_from_file_location('_rss_diagnostics', root / 'rss_diagnostics.py')
+    diagnostics = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(diagnostics)
+    diagnostics.qualify(root)
+    return derivative
 
 
 def host_info(root):
@@ -203,7 +198,7 @@ def main():
     frozen.capture(root, 'python-version.txt', [sys.executable, '--version'])
     save(root / 'runner.json', {k: os.environ.get(k) for k in ('RUNNER_OS', 'RUNNER_ARCH', 'ImageOS', 'ImageVersion', 'GITHUB_SHA', 'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT')})
     host_info(root)
-    calibrate(root)
+    derivative = qualify_rss(root)
     check_readiness(root, selected)
     affinity = sorted(os.sched_getaffinity(0))
     save(root / 'affinity-postreadiness.json', {'selected_cpu': selected, 'allowed_cpus': affinity,
@@ -211,7 +206,7 @@ def main():
     if affinity != [selected]:
         raise RuntimeError('CPU affinity changed before measurement')
     try:
-        common = [sys.executable, str(root / 'optimize.py')]
+        common = [sys.executable, str(derivative)]
         arguments = [str(root / 'contract.json'), '--runs', str(root / 'runs'), '--expect-contract', CONTRACT]
         # Serial full workflows. No monitoring, profiler, batching or retries during timing.
         for action in ('baseline', 'evaluate'):
