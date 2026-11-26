@@ -28,16 +28,30 @@ jobs:
         run: rustup toolchain install 1.99.1 --profile minimal
       - name: Settle disposable VM after toolchain installation
         run: |
-          sudo mdutil -i off /
+          mkdir -p "$RUNNER_TEMP/fasta-setup"
+          set +e
+          sudo mdutil -a -s > "$RUNNER_TEMP/fasta-setup/spotlight-before.txt" 2>&1
+          before_status=$?
+          sudo mdutil -a -i off > "$RUNNER_TEMP/fasta-setup/spotlight-disable.txt" 2>&1
+          disable_status=$?
+          sudo mdutil -a -s > "$RUNNER_TEMP/fasta-setup/spotlight-after.txt" 2>&1
+          after_status=$?
+          printf 'before=%s\ndisable=%s\nafter=%s\n' "$before_status" "$disable_status" "$after_status" > "$RUNNER_TEMP/fasta-setup/status.txt"
+          set -e
+          if [ "$before_status" -ne 0 ] || [ "$disable_status" -ne 0 ] || [ "$after_status" -ne 0 ]; then
+            exit 1
+          fi
           sleep 90
       - name: Verify sanitized compiler environment and run fixed benchmark once
-        run: python3 benchmarks/fasta/run.py --destination "$RUNNER_TEMP/fasta-evidence" --record-only-readiness
+        run: python3 benchmarks/fasta/run.py --destination "$RUNNER_TEMP/fasta-evidence" --wait-for-readiness
       - name: Preserve complete evidence even on failure
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: fasta-evidence-${{ github.run_id }}
-          path: ${{ runner.temp }}/fasta-evidence
+          path: |
+            ${{ runner.temp }}/fasta-evidence
+            ${{ runner.temp }}/fasta-setup
           include-hidden-files: true
           retention-days: 7
           if-no-files-found: warn

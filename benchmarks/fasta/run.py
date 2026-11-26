@@ -13,6 +13,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import time
 import zlib
 
 CONTRACT = 'c0e4df120ec9c00e8047c1bb9b6eaffcb28c39064b69de211fa529703478bc76'
@@ -42,7 +43,13 @@ def restore(destination):
 
 
 def capture(root, name, argv, *, env=None, cwd=None):
-    result = subprocess.run(argv, capture_output=True, text=True, timeout=45, env=env, cwd=cwd)
+    try:
+        result = subprocess.run(argv, capture_output=True, text=True, timeout=45, env=env, cwd=cwd)
+    except subprocess.TimeoutExpired as error:
+        def decoded(value):
+            return value.decode(errors='replace') if isinstance(value, bytes) else (value or '')
+        (root / name).write_text(decoded(error.stdout) + decoded(error.stderr))
+        raise
     (root / name).write_text(result.stdout + result.stderr)
     if result.returncode:
         raise RuntimeError('Context command failed: ' + repr(argv))
@@ -97,6 +104,41 @@ def ready(text):
             and all(v >= 85 for v in idle[1:]) and all(v == [0, 0] for v in swaps[1:])}
 
 
+def check_readiness(root, *, wait=False, record_only=False):
+    maximum = 6 if wait else 1
+    readiness = {'passed': False, 'enforced': not record_only,
+                 'mode': 'bounded-wait' if wait else 'single-window',
+                 'maximum_windows': maximum, 'gap_seconds': 20 if wait else 0,
+                 'qualified_window': None, 'windows': []}
+    for number in range(1, maximum + 1):
+        name = f'readiness-window-{number:02d}'
+        try:
+            text = capture(root, name + '.txt',
+                           ['top', '-l', '6', '-s', '2', '-n', '8', '-o', 'cpu', '-stats', 'pid,command,cpu'])
+        except (RuntimeError, subprocess.TimeoutExpired) as error:
+            window = {'window': number, 'passed': False, 'capture_error': str(error)}
+            save(root / (name + '.json'), window)
+            readiness['windows'].append(window)
+            save(root / 'readiness.json', readiness)
+            raise
+        window = dict(ready(text), window=number)
+        save(root / (name + '.json'), window)
+        readiness['windows'].append(window)
+        readiness.update(idle_percent=window['idle_percent'], swap_intervals=window['swap_intervals'])
+        if window['passed']:
+            readiness.update(passed=True, qualified_window=number)
+        save(root / 'readiness.json', readiness)
+        # Retain the historical final pre-measurement telemetry filename too.
+        (root / 'host-before.txt').write_text(text)
+        if readiness['passed']:
+            return readiness
+        if number < maximum:
+            time.sleep(20)
+    if readiness['enforced']:
+        raise RuntimeError('Fresh VM did not meet readiness; no performance run started')
+    return readiness
+
+
 def calibrate(root):
     rows = []
     for size in (0, 64, 128):
@@ -126,7 +168,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--destination', required=True, type=Path)
     parser.add_argument('--verify-only', action='store_true')
-    parser.add_argument('--record-only-readiness', action='store_true', help='Explicitly authorized run: retain host telemetry without enforcing the additional idle preflight')
+    readiness_mode = parser.add_mutually_exclusive_group()
+    readiness_mode.add_argument('--wait-for-readiness', action='store_true', help='Enforce unchanged idle/swap gate across at most six windows, with 20-second gaps')
+    readiness_mode.add_argument('--record-only-readiness', action='store_true', help='Explicitly authorized run: retain host telemetry without enforcing the additional idle preflight')
     args = parser.parse_args()
     root = args.destination.resolve()
     package = restore(root)
@@ -142,12 +186,7 @@ def main():
     capture(root, 'python-version.txt', [sys.executable, '--version'])
     save(root / 'runner.json', {k: os.environ.get(k) for k in ('RUNNER_OS', 'RUNNER_ARCH', 'ImageOS', 'ImageVersion', 'GITHUB_SHA', 'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT')})
     calibrate(root)
-    text = capture(root, 'host-before.txt', ['top', '-l', '6', '-s', '2', '-n', '8', '-o', 'cpu', '-stats', 'pid,command,cpu'])
-    readiness = ready(text)
-    readiness['enforced'] = not args.record_only_readiness
-    save(root / 'readiness.json', readiness)
-    if not readiness['passed'] and readiness['enforced']:
-        raise RuntimeError('Fresh VM did not meet readiness; no performance run started')
+    check_readiness(root, wait=args.wait_for_readiness, record_only=args.record_only_readiness)
     common = [sys.executable, str(root / 'optimize.py')]
     arguments = [str(root / 'contract.json'), '--runs', str(root / 'runs'), '--expect-contract', CONTRACT]
     # Serial full workflows. No monitoring, profiler, batching or retries during timing.
