@@ -28,8 +28,8 @@ jobs:
         run: rustup toolchain install 1.99.1 --profile minimal
       - name: Settle disposable Linux VM after toolchain installation
         run: sleep 90
-      - name: Qualify unchanged production and host-location activity pairs, then benchmark once
-        run: python3 benchmarks/fasta/run_host.py --destination "$RUNNER_TEMP/fasta-evidence"
+      - name: Qualify unchanged production and neutral duration-link-output crossover, then benchmark once
+        run: python3 benchmarks/fasta/run_output.py --destination "$RUNNER_TEMP/fasta-evidence"
       - name: Preserve complete evidence even on failure
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
